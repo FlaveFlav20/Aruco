@@ -1,4 +1,3 @@
 # Aruco
 LRE project
 
-v
