@@ -11,6 +11,6 @@ openCV version : 4.6.0
 - Aruco markers generator
 - Chess table generator
     
-## What does this code contain?
+## What does each folder contain?
 - example.txt -> just giving an example
 - Explain.txt -> To explain each arguments
