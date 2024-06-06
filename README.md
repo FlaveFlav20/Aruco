@@ -2,7 +2,8 @@
 
 ## Spacework
 
-openCV version : 4.6.0
+openCV version : 4.6.0  
+You can locate this version on the official [OpenCV website](https://opencv.org/releases/).
 
 ## What does this code allow to do? 
 
@@ -12,5 +13,5 @@ openCV version : 4.6.0
 - Chess table generator
     
 ## What does each folder contain?
-- example.txt -> just giving an example
-- Explain.txt -> To explain each arguments
+- example.txt &#8594; just giving an example
+- Explain.txt &#8594; To explain each arguments
