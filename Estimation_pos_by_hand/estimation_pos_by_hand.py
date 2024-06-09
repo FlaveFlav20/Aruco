@@ -143,84 +143,93 @@ def mouse_callback_top_left(event, x, y, flags, param):
     global top_left
     if event == cv2.EVENT_LBUTTONDOWN:
         top_left = [x, y]
+        print("Done")
 
 def mouse_callback_top_right(event, x, y, flags, param):
     global top_right
-    if event == cv2.EVENT_LBUTTONDBLCLK:
+    if event == cv2.EVENT_LBUTTONDOWN:
         top_right = [x, y]
+        print("Done")
 
 def mouse_callback_down_right(event, x, y, flags, param):
     global down_right
-    if event == cv2.EVENT_LBUTTONDBLCLK:
+    if event == cv2.EVENT_LBUTTONDOWN:
         down_right = [x, y]
+        print("Done")
 
 def mouse_callback_down_left(event, x, y, flags, param):
     global down_left
-    if event == cv2.EVENT_LBUTTONDBLCLK:
+    if event == cv2.EVENT_LBUTTONDOWN:
         down_left = [x, y]
+        print("Done")
 
 # If at least one marker detected
 if ids is not None and len(ids) > 0:
     nMarkers = len(corners)
 
-    current_marker_corners = corners[0][0]
-    top_left = current_marker_corners[0]
-    top_right = current_marker_corners[1]
-    down_right = current_marker_corners[2]
-    down_left = current_marker_corners[3]
-
     print(corners)
 
-    cv2.imshow("Position top left", imageCopy)
-    cv2.setMouseCallback("Position top left", mouse_callback_top_left)
 
-    print("top_left", top_left)
+    if numberMarkers != nMarkers and capture == True:
+        print("Not the same number of markers. Got: ",nMarkers, ";Expected: ", numberMarkers)
+        exit()
 
-    print("Press 'c' to continue")
-    while True:
 
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('c'):
-            cv2.destroyWindow("Position top left")
-            print("Continuing")
-            break
-    print("top_left", top_left)
-    cv2.imshow("Position top right", imageCopy)
-    cv2.setMouseCallback("Position top right", mouse_callback_top_right)
 
-    while True:
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('c'):
-            cv2.destroyWindow("Position top right")
-            print("Continuing")
-            break
+    for i in range(nMarkers):
+        current_marker_corners = corners[i][0]
+        top_left = current_marker_corners[0]
+        top_right = current_marker_corners[1]
+        down_right = current_marker_corners[2]
+        down_left = current_marker_corners[3]
 
-    cv2.imshow("Position down right", imageCopy)
-    cv2.setMouseCallback("Position down right", mouse_callback_down_right)
+        cv2.imshow("Position top left", imageCopy)
+        cv2.setMouseCallback("Position top left", mouse_callback_top_left)
 
-    while True:
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('c'):
-            cv2.destroyWindow("Position down right")
-            print("Continuing")
-            break
+        print("Press 'c' to continue")
+        while True:
 
-    cv2.imshow("Position down left", imageCopy)
-    cv2.setMouseCallback("Position down left", mouse_callback_down_left)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('c'):
+                cv2.destroyWindow("Position top left")
+                print("Continuing")
+                break
 
-    while True:
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('c'):
-            cv2.destroyWindow("Position down left")
-            print("Continuing")
-            break
+        cv2.imshow("Position top right", imageCopy)
+        cv2.setMouseCallback("Position top right", mouse_callback_top_right)
 
-    corners[0][0][0] = top_left;
-    corners[0][0][1] = top_right
-    corners[0][0][2] = down_right
-    corners[0][0][3] = down_left
+        while True:
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('c'):
+                cv2.destroyWindow("Position top right")
+                print("Continuing")
+                break
 
-    print(corners)
+        cv2.imshow("Position down right", imageCopy)
+        cv2.setMouseCallback("Position down right", mouse_callback_down_right)
+
+        while True:
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('c'):
+                cv2.destroyWindow("Position down right")
+                print("Continuing")
+                break
+
+        cv2.imshow("Position down left", imageCopy)
+        cv2.setMouseCallback("Position down left", mouse_callback_down_left)
+
+        while True:
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('c'):
+                cv2.destroyWindow("Position down left")
+                print("Continuing")
+                break
+
+        corners[i][0][0] = top_left;
+        corners[i][0][1] = top_right
+        corners[i][0][2] = down_right
+        corners[i][0][3] = down_left
+
     # Get markers positions
     rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, markerLength, cameraMatrix, distCoeffs)
 
@@ -229,6 +238,8 @@ if ids is not None and len(ids) > 0:
     # Display markers axes
     for i in range(nMarkers):
         cv2.drawFrameAxes(imageCopy, cameraMatrix, distCoeffs, rvecs[i], tvecs[i], 0.1)
+
+    cv2.aruco.drawDetectedMarkers(imageCopy, corners, ids)
 
     for i in range(nMarkers):
         x, y, z = tvecs[i][0]
