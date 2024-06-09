@@ -57,7 +57,7 @@ if markerLength == 0.0:
 csvPath = args["csv"]
 if not os.path.exists(csvPath):
     print("[ERROR] CSV file  (-c/-csv) must be valid")
-    exist()
+    exit()
 
 fscsv = open(csvPath + "/" + "all_pos.csv", "a")
 
@@ -69,7 +69,7 @@ if not os.path.exists(outputFile):
     print("[ERROR] Calibration path (-o/--output) must be valid")
     exit()
 
-imgPath = args["output"]
+imgPath = args["image"]
 
 if not os.path.exists(imgPath):
     if not os.path.isfile(imgPath):
@@ -123,7 +123,9 @@ savedVideoOriginal = None
 
 ## Let's do it
 
-image = cv2.read(imgPath)
+print(imgPath)
+
+image = cv2.imread(imgPath)
 
 height, width, _ = image.shape
 
@@ -135,53 +137,90 @@ imageCopy = image.copy()
 # Detect aruco markers
 corners, ids, _ = cv2.aruco.detectMarkers(image, dictionary)
 
+top_left = None
+
 def mouse_callback_top_left(event, x, y, flags, param):
-    global corners
+    global top_left
     if event == cv2.EVENT_LBUTTONDOWN:
         top_left = [x, y]
 
-cv2.setMouseCallback("Position top left", mouse_callback_top_left)
-
 def mouse_callback_top_right(event, x, y, flags, param):
-    global corners
-    if event == cv2.EVENT_LBUTTONDOWN:
+    global top_right
+    if event == cv2.EVENT_LBUTTONDBLCLK:
         top_right = [x, y]
 
-cv2.setMouseCallback("Position top right", mouse_callback_top_right)
-
 def mouse_callback_down_right(event, x, y, flags, param):
-    global corners
-    if event == cv2.EVENT_LBUTTONDOWN:
+    global down_right
+    if event == cv2.EVENT_LBUTTONDBLCLK:
         down_right = [x, y]
 
-cv2.setMouseCallback("Position down right", mouse_callback_down_right)
-
 def mouse_callback_down_left(event, x, y, flags, param):
-    global corners
-    if event == cv2.EVENT_LBUTTONDOWN:
-        fown_left = [x, y]
-
-cv2.setMouseCallback("Position down left", mouse_callback_down_left)
+    global down_left
+    if event == cv2.EVENT_LBUTTONDBLCLK:
+        down_left = [x, y]
 
 # If at least one marker detected
 if ids is not None and len(ids) > 0:
     nMarkers = len(corners)
 
-    current_marker_corners = corners[i][0]
+    current_marker_corners = corners[0][0]
     top_left = current_marker_corners[0]
     top_right = current_marker_corners[1]
-    bottom_right = current_marker_corners[2]
-    bottom_left = current_marker_corners[3]
+    down_right = current_marker_corners[2]
+    down_left = current_marker_corners[3]
+
+    print(corners)
 
     cv2.imshow("Position top left", imageCopy)
-    cv2.waitkey()
-    cv2.imshow("Position top right", imageCopy)
-    cv2.waitkey()
-    cv2.imshow("Position down right", imageCopy)
-    cv2.waitkey()
-    cv2.imshow("Position down left", imageCopy)
-    cv2.waitkey()
+    cv2.setMouseCallback("Position top left", mouse_callback_top_left)
 
+    print("top_left", top_left)
+
+    print("Press 'c' to continue")
+    while True:
+
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('c'):
+            cv2.destroyWindow("Position top left")
+            print("Continuing")
+            break
+    print("top_left", top_left)
+    cv2.imshow("Position top right", imageCopy)
+    cv2.setMouseCallback("Position top right", mouse_callback_top_right)
+
+    while True:
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('c'):
+            cv2.destroyWindow("Position top right")
+            print("Continuing")
+            break
+
+    cv2.imshow("Position down right", imageCopy)
+    cv2.setMouseCallback("Position down right", mouse_callback_down_right)
+
+    while True:
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('c'):
+            cv2.destroyWindow("Position down right")
+            print("Continuing")
+            break
+
+    cv2.imshow("Position down left", imageCopy)
+    cv2.setMouseCallback("Position down left", mouse_callback_down_left)
+
+    while True:
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('c'):
+            cv2.destroyWindow("Position down left")
+            print("Continuing")
+            break
+
+    corners[0][0][0] = top_left;
+    corners[0][0][1] = top_right
+    corners[0][0][2] = down_right
+    corners[0][0][3] = down_left
+
+    print(corners)
     # Get markers positions
     rvecs, tvecs, _ = cv2.aruco.estimatePoseSingleMarkers(corners, markerLength, cameraMatrix, distCoeffs)
 
@@ -223,6 +262,5 @@ cv2.imshow("Position", imageCopy)
 
 
 print("[INFO] Closing video stream...")
-videostream.release()
 cv2.destroyAllWindows()
 fscsv.close()
