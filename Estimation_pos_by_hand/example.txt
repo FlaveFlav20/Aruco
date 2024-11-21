@@ -1,1 +1,0 @@
-python3 estimation_pos_by_hand.py -t=DICT_4X4_100 -o=/path_to_calibration/calibration.yml -l=0.08 -c=CSV/ -i=Image/ -b=0 -n=1 -img=img.jpg
