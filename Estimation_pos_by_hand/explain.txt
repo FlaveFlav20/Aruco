@@ -1,1 +1,0 @@
-The goal of this subdirectory is to check if there is a problem with arUco pos estimation.

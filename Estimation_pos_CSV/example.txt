@@ -1,1 +1,0 @@
-python3 aruco_pos_csv.py -t=DICT_4X4_100 -o=/path_to_calibration/calibration.yml -l=0.08 -c=CSV/ -i=Image/ -b=0 -v=0 -n=1
